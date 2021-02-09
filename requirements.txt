@@ -1,0 +1,8 @@
+autopep8
+numpy
+matplotlib
+pandas
+scikit-learn
+streamlit
+seaborn
+streamlit-ace
