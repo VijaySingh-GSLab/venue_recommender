@@ -16,7 +16,7 @@ list_color_0 = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4'
                 '#000075', '#808080', '#ffffff', '#fff008']
 list_palette_0 = ['Blues_r', 'OrRd_r', 'BuGn_r', 'PuRd_r', 'BuPu_r', 'Wistia_r', 'binary_r', 'Blues_r', 'OrRd_r', 'BuGn_r', 'PuRd_r', 'BuPu_r', 'Wistia_r', 'binary_r' ]
 
-PROJECT_PATH = Path(r'C:\Users\GS-1931\Desktop\GIT_DESKTOP\0_invisibly\04_poc_code_files\17_MigrationApp\migration_app')
+PROJECT_PATH = Path.cwd()
 DATA_PATH = PROJECT_PATH.joinpath('dataset')
 DATA_PATH_RAW = DATA_PATH.joinpath('raw_data')
 DATA_PATH_ARTIFACTS = PROJECT_PATH.joinpath('artifacts')
