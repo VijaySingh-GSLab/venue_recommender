@@ -48,8 +48,8 @@ def main():
     DEST_CITY = st.selectbox('Destination City', LIST_CITY)
 
     # L2-inputs
-    NUM_VENUES = st.selectbox("select num venues to be displayed", [i for i in range(1, 11)])
-    NUM_MATCH = st.selectbox("num matching locations to be displayed", [i for i in range(1, 11)])
+    NUM_MATCH = st.selectbox("num matching neighborhood to be displayed", [i for i in range(5, 11)])
+    NUM_VENUES = st.selectbox("select num venues to be displayed", [i for i in range(6, 11)])
     result = ""
 
     file_name = [i for i in LIST_CITY_DATA_FILE_NAME if DEST_CITY in i][0]

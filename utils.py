@@ -292,15 +292,23 @@ def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_fea
         ax.set_ylim(0, ylim + 1)
 
         ax.set_xticklabels(ls_venues, rotation=15, horizontalalignment='right', size=12)
+        # ax.text((len(ls_venues)-1)//2.5, ylim, list_match[i_main], fontsize=15)
+        # ax.text(int(len(ls_venues)*0.4), ylim-1, list_match[i_main], fontsize=15)
+
         if i_main == 0:
-            ax.set_xlabel(xlabel='(source location) {}'.format(list_match[i_main]), fontsize=12, color='red')
+            # ax.text(int(len(ls_venues)*0.4), ylim-1, 'Source City\n{}'.format(list_match[i_main]), fontsize=12)
+            ax.set_title('{}\n(Source City)'.format(list_match[i_main]), loc='center', pad=-10,
+                         fontdict={'verticalalignment': 'center_baseline'})
         else:
-            ax.set_xlabel(xlabel=list_match[i_main], fontsize=12, color='red')
+            # ax.text(int(len(ls_venues)*0.4), ylim-1, list_match[i_main], fontsize=12)
+            ax.set_title('{}'.format(list_match[i_main]), loc='center', pad=-10,
+                         fontdict={'verticalalignment': 'center_baseline'})
 
     main_label = 'Comparison of suggested Neighborhood with the base location\nnum neighborhood : {}\nnum top venues : {}'.format(
         num_match, num_venues)
-    fig.text(0.5, 0.92, main_label, ha='center', va='center', rotation='horizontal', size=18, color='blue')
+    fig.text(0.5, 1.02, main_label, ha='center', va='center', rotation='horizontal', size=18, color='blue')
 
+    plt.tight_layout()
     plt.show()
     return fig
 
