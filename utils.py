@@ -10,6 +10,7 @@ from pathlib import Path
 SEED = 100
 DO_PRINT = True
 MAX_MATCH = 50
+MIN_VENUES_REQUIRED = 4
 
 list_color_0 = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c',
                 '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
@@ -29,8 +30,8 @@ colList_rawData = [col_grain, col_feature, col_feature_name]
 #colList_rawData = [col_grain, col_feature]
 colList_meta = [col_grain]
 
-LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
-#LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv', 'bangalore_venues.csv']
+#LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
+LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv', 'bangalore_venues.csv']
 
 
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
@@ -68,8 +69,20 @@ def save_data_file(X=None, file_name=None, data_type='raw'):
     return X
 
 
+def neighborhood_haiving_min_n_venues(X_raw=None, min_venues=4):
+    X = X_raw.copy()
+    X['count'] = 1
+    X = X.groupby(by=[col_grain, col_feature], as_index=False).count()
+
+    arr = X[col_grain].value_counts()
+    return arr[arr >= min_venues].index.values
+
+
 def pre_process_raw_data(X=None):
     X = X[[col_grain, col_feature]]
+
+    ls_neighborhood = neighborhood_haiving_min_n_venues(X_raw=X, min_venues=MIN_VENUES_REQUIRED)
+    X = X[X[col_grain].isin(ls_neighborhood)]
 
     X['count'] = 1
     X = pd.pivot_table(X, values='count', index=col_grain, columns=col_feature, aggfunc=np.sum, fill_value=0)
