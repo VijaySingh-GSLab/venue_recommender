@@ -31,7 +31,7 @@ colList_rawData = [col_grain, col_feature, col_feature_name]
 colList_meta = [col_grain]
 
 #LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
-LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv', 'bangalore_venues.csv']
+LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'bangalore_venues.csv']
 
 
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
