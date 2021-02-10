@@ -6,8 +6,8 @@ import pandas as pd
 from utils import perform_match_wrapper, visualize_venue_match_results_wrapper, generate_ui_df, \
     LIST_CITY_DATA_FILE_NAME, read_data_file, get_common_feature_list, LIST_CITY, col_grain, colList_meta
 
-#WELCOME_MSG = """We understand! Moving to a new city is stressful. It disturbs your life. Choosing the right neighborhood is crucial. A neighborhood that can give you a similar lifestyle, and a similar cost of living. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood for its many attributes and recommend the most suitable neighborhood in the new city."""
-WELCOME_MSG = """We understand! Moving to a new city is stressful. Choosing the right neighborhood is crucial. A neighborhood that can give you a similar lifestyle. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood and recommend the most suitable neighborhood in the new city."""
+# WELCOME_MSG = """We understand! Moving to a new city is stressful. It disturbs your life. Choosing the right neighborhood is crucial. A neighborhood that can give you a similar lifestyle, and a similar cost of living. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood for its many attributes and recommend the most suitable neighborhood in the new city."""
+WELCOME_MSG = """<p class="big-font">We understand! Moving to a new city is stressful. A neighborhood that can give you a similar lifestyle. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood and recommend the most suitable neighborhood in the new city.</p>"""
 
 
 @st.cache()
@@ -20,56 +20,53 @@ def prediction():
 def main():
     # front end elements of the web page
     html_temp = """ 
-    <div style ="background-color:yellow;padding:-1px"> 
+    <div style ="background-color:yellow;padding:1px"> 
     <h1 style ="color:black;text-align:center;">Neighborhood Recommender</h1> 
     </div> 
     """
 
     st.set_page_config(layout="wide", initial_sidebar_state='expanded')
-
-    # display the front end aspect
     st.markdown(html_temp, unsafe_allow_html=True)
-    #st.markdown(WELCOME_MSG)
-    #st.markdown("Isn't it cool? Try it!")
-    #st.text('Note: We will be adding more cities soon. :)')
 
-    st.sidebar.title('Summary')
-    st.sidebar.markdown(WELCOME_MSG)
-    st.sidebar.markdown("Isn't it cool? Try it!")
+    st.sidebar.title('About')
+    st.markdown("""
+                    <style>
+                    .big-font {
+                        font-size:12px !important;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+    st.sidebar.markdown(WELCOME_MSG, unsafe_allow_html=True)
+    st.sidebar.markdown("""<p class="big-font">Isn't it cool? Try it!</p>""", unsafe_allow_html=True)
+
+    st.markdown("")
+    #st.markdown('Select Cities')
+    col1, col2 = st.beta_columns(2)
+
     # L1-inputs
-    #st.markdown('Moving from:')
-    SOURCE_CITY = st.selectbox('Select city you are moving from:', LIST_CITY)
-
-    same_city = st.checkbox("Moving within same city")
-    if same_city:
-        DEST_CITY = SOURCE_CITY
-        #st.markdown('Moving in abc:')
-    else:
-        DEST_CITY = st.selectbox('Select city you are moving to:', LIST_CITY)
+    SOURCE_CITY = col1.selectbox('Moving from city:', LIST_CITY)
 
     # L3 input
-    # st.text("")
-    # st.markdown('Moving to:')
-    #st.text("")
-    #st.text("")
-    if SOURCE_CITY == DEST_CITY:
-        st.markdown('Moving to a new Neighborhood in {}?'.format(SOURCE_CITY))
+    same_city = st.checkbox("moving within same city")
+    if same_city:
+        DEST_CITY = SOURCE_CITY
+        st.markdown("#### Awesome! Let's find a new neighborhood for you in {}.".format(DEST_CITY))
     else:
-        st.markdown('Moving from {} to {}?'.format(SOURCE_CITY, DEST_CITY))
+        DEST_CITY = col2.selectbox('Moving to city:', LIST_CITY)
+        st.markdown("#### Great! Let's explore {}.".format(DEST_CITY))
+
     # L2 input
     file_name = [i for i in LIST_CITY_DATA_FILE_NAME if SOURCE_CITY in i][0]
     X_source = read_data_file(file_name=file_name, data_type='artifact_app')
     list_sources_venues = list(X_source[col_grain].values)
-    SOURCE_VENUE = st.selectbox('From Neighborhood', list_sources_venues)
-
+    SOURCE_VENUE = st.selectbox('To get suitable locations, please select the neighborhood you are moving from:',
+                                    list_sources_venues)
     # L2-inputs
-    #st.text("")
-    #st.text("")
-    #st.sidebar.markdown('Below inputs help in better visualization of recommendations')
-    #NUM_MATCH = st.selectbox("num matching neighborhood to be displayed", [i for i in range(5, 11)])
-    #NUM_VENUES = st.selectbox("num venues to be displayed", [i for i in range(6, 11)])
-    NUM_MATCH = st.sidebar.slider("Choose number of matching neighborhood to be displayed: ", min_value=3, max_value=8, value=4, step=1)
-    NUM_VENUES = st.sidebar.slider("Choose number of venues to be displayed: ", min_value=4, max_value=15, value=10, step=1)
+    # st.sidebar.markdown('Below inputs help in better visualization of recommendations')
+    NUM_MATCH = st.sidebar.slider("Choose number of matching neighborhood to be displayed: ", min_value=3, max_value=8,
+                                  value=4, step=1)
+    NUM_VENUES = st.sidebar.slider("Choose number of venues to be displayed: ", min_value=4, max_value=15, value=10,
+                                   step=1)
 
     file_name = [i for i in LIST_CITY_DATA_FILE_NAME if DEST_CITY in i][0]
     X_dest = read_data_file(file_name=file_name, data_type='artifact_app')
@@ -92,17 +89,24 @@ def main():
                                                                                 X_meta_mapper=X_meta_mapper,
                                                                                 source_name=source_name,
                                                                                 colList_features=colList_features,
-                                                                                num_match=num_match, num_venues=num_venues)
+                                                                                num_match=num_match,
+                                                                                num_venues=num_venues)
 
+            #st.balloons()
             st.success('Here are a few neighborhood/s suggestion for you. Good luck!')
 
             df = X_match_sorted_named.copy()
             df = df.drop(columns=['index'])
-            #st.table(df)
+            # st.table(df)
             st.dataframe(df)
 
+        #show_chart = st.checkbox("display chart", False)
+        #if show_chart:
         with st.spinner('Generating the visualization....'):
             st.pyplot(graph)
+    # st.subheader("A Chart you can show or hide")
+    #   with st.section(label="the_chart"):
+    #   st.write(df)
 
 
 if __name__ == '__main__':

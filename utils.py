@@ -10,7 +10,7 @@ from pathlib import Path
 SEED = 100
 DO_PRINT = True
 MAX_MATCH = 50
-MIN_VENUES_REQUIRED = 4
+MIN_VENUES_REQUIRED = 3
 
 list_color_0 = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c',
                 '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
@@ -31,7 +31,7 @@ colList_rawData = [col_grain, col_feature, col_feature_name]
 colList_meta = [col_grain]
 
 #LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
-LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'bangalore_venues.csv']
+LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'bangalore_venues.csv', 'pune_venues.csv']
 
 
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
