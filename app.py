@@ -6,6 +6,9 @@ import pandas as pd
 from utils import perform_match_wrapper, visualize_venue_match_results_wrapper, generate_ui_df, \
     LIST_CITY_DATA_FILE_NAME, read_data_file, get_common_feature_list, LIST_CITY, col_grain, colList_meta
 
+WELCOME_MSG = """We understand! Moving to a new city is stressful. It disturbs your life. Choosing the right neighborhood is crucial. A neighborhood that can give you a similar lifestyle, and a similar cost of living. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood for its many attributes and recommend the most suitable neighborhood in the new city. Isn't it cool? Try it!
+ Note: We will be adding more cities soon. :)"""
+
 # loading the trained model
 project_path = r'C:\Users\GS-1931\Desktop\GIT_DESKTOP\0_invisibly\04_poc_code_files\16_LoanPredict'
 artifacts_path = project_path + '\\migration_notebooks\\artifacts\\'
@@ -28,28 +31,41 @@ def prediction():
 def main():
     # front end elements of the web page
     html_temp = """ 
-    <div style ="background-color:yellow;padding:13px"> 
-    <h1 style ="color:black;text-align:center;">Migration ML App</h1> 
+    <div style ="background-color:yellow;padding:5px"> 
+    <h1 style ="color:black;text-align:center;">Neighborhood Recommender</h1> 
     </div> 
     """
 
     # display the front end aspect
     st.markdown(html_temp, unsafe_allow_html=True)
+    st.markdown(WELCOME_MSG)
 
     # L1-inputs
+    st.text("")
+    st.markdown('Moving from:')
     SOURCE_CITY = st.selectbox('Source City', LIST_CITY)
 
+    # L2 input
     file_name = [i for i in LIST_CITY_DATA_FILE_NAME if SOURCE_CITY in i][0]
     X_source = read_data_file(file_name=file_name, data_type='artifact_app')
     list_sources_venues = list(X_source[col_grain].values)
+    SOURCE_VENUE = st.selectbox('Neighborhood', list_sources_venues)
 
-    # L1-p2 input
-    SOURCE_VENUE = st.selectbox('Source Neighborhood', list_sources_venues)
+    # L3 input
+    st.text("")
+    st.markdown('Moving to:')
     DEST_CITY = st.selectbox('Destination City', LIST_CITY)
 
+    if SOURCE_CITY == DEST_CITY:
+        st.markdown('Moving to a new Neighborhood in {}?'.format(SOURCE_CITY))
+    else:
+        st.markdown('Moving from {} to {}?'.format(SOURCE_CITY, DEST_CITY))
+
     # L2-inputs
+    st.text("")
+    st.markdown('Below inputs help in visualizing the recommendations')
     NUM_MATCH = st.selectbox("num matching neighborhood to be displayed", [i for i in range(5, 11)])
-    NUM_VENUES = st.selectbox("select num venues to be displayed", [i for i in range(6, 11)])
+    NUM_VENUES = st.selectbox("num venues to be displayed", [i for i in range(6, 11)])
     result = ""
 
     file_name = [i for i in LIST_CITY_DATA_FILE_NAME if DEST_CITY in i][0]
