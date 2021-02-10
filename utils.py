@@ -26,9 +26,13 @@ col_grain = 'Neighborhood'
 col_feature = 'Venue Category'  # Venue
 col_feature_name = 'Venue'
 colList_rawData = [col_grain, col_feature, col_feature_name]
+#colList_rawData = [col_grain, col_feature]
 colList_meta = [col_grain]
 
 LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
+#LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv', 'bangalore_venues.csv']
+
+
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
 
 
@@ -69,7 +73,7 @@ def pre_process_raw_data(X=None):
 
     X['count'] = 1
     X = pd.pivot_table(X, values='count', index=col_grain, columns=col_feature, aggfunc=np.sum, fill_value=0)
-    X = X.drop(columns=[col_grain])
+    X = X.drop(columns=[col_grain], errors='ignore')
     X = X.reset_index()
 
     return X

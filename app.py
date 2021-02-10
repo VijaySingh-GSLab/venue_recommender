@@ -79,21 +79,22 @@ def main():
         num_match = NUM_MATCH
         num_venues = NUM_VENUES
         source_name = SOURCE_VENUE
-        X_match_sorted_named, graph = visualize_venue_match_results_wrapper(X_source=X_source, X_match=X_match,
-                                                                            X_meta_mapper=X_meta_mapper,
-                                                                            source_name=source_name,
-                                                                            colList_features=colList_features,
-                                                                            num_match=num_match, num_venues=num_venues)
+        with st.spinner('Finding the right neighborhood for you ....'):
+            X_match_sorted_named, graph = visualize_venue_match_results_wrapper(X_source=X_source, X_match=X_match,
+                                                                                X_meta_mapper=X_meta_mapper,
+                                                                                source_name=source_name,
+                                                                                colList_features=colList_features,
+                                                                                num_match=num_match, num_venues=num_venues)
 
-        st.success('Here are a few neighborhood/s suggestion for you. Good luck!')
+            st.success('Here are a few neighborhood/s suggestion for you. Good luck!')
 
-        df = X_match_sorted_named.copy()
-        df = df.drop(columns=['index'])
-        #st.table(df)
-        st.dataframe(df)
+            df = X_match_sorted_named.copy()
+            df = df.drop(columns=['index'])
+            #st.table(df)
+            st.dataframe(df)
 
-        st.text('Generating the venue plot for you....')
-        st.pyplot(graph)
+        with st.spinner('Generating the visualization....'):
+            st.pyplot(graph)
 
 
 if __name__ == '__main__':
