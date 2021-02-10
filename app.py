@@ -6,25 +6,13 @@ import pandas as pd
 from utils import perform_match_wrapper, visualize_venue_match_results_wrapper, generate_ui_df, \
     LIST_CITY_DATA_FILE_NAME, read_data_file, get_common_feature_list, LIST_CITY, col_grain, colList_meta
 
-WELCOME_MSG = """We understand! Moving to a new city is stressful. It disturbs your life. Choosing the right neighborhood is crucial. A neighborhood that can give you a similar lifestyle, and a similar cost of living. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood for its many attributes and recommend the most suitable neighborhood in the new city. Isn't it cool? Try it!
- Note: We will be adding more cities soon. :)"""
-
-# loading the trained model
-project_path = r'C:\Users\GS-1931\Desktop\GIT_DESKTOP\0_invisibly\04_poc_code_files\16_LoanPredict'
-artifacts_path = project_path + '\\migration_notebooks\\artifacts\\'
-
-#X_source = joblib.load(artifacts_path + 'X_source')
-#X_dest = joblib.load(artifacts_path + 'X_dest')
-#list_sources = joblib.load(artifacts_path + 'list_sources')
-#colList_features = joblib.load(artifacts_path + 'colList_features')
-#colList_meta = joblib.load(artifacts_path + 'colList_meta')
+WELCOME_MSG = """We understand! Moving to a new city is stressful. It disturbs your life. Choosing the right neighborhood is crucial. A neighborhood that can give you a similar lifestyle, and a similar cost of living. If you ask people, you would get biased opinions. No worries! Using the "Machine Learning" algorithms, we solve the problem for you. We scan your current neighborhood for its many attributes and recommend the most suitable neighborhood in the new city."""
 
 
 @st.cache()
-# defining the function which will make the prediction using the data which the user inputs
 def prediction():
     # Pre-processing user input
-    return 'abc'
+    return None
 
 
 # this is the main function in which we define our webpage
@@ -36,37 +24,44 @@ def main():
     </div> 
     """
 
+    st.set_page_config(layout="wide", initial_sidebar_state='expanded')
+
     # display the front end aspect
     st.markdown(html_temp, unsafe_allow_html=True)
     st.markdown(WELCOME_MSG)
+    st.markdown("Isn't it cool? Try it!")
+    st.text('Note: We will be adding more cities soon. :)')
 
+    st.sidebar.title('User Inputs')
     # L1-inputs
-    st.text("")
-    st.markdown('Moving from:')
-    SOURCE_CITY = st.selectbox('Source City', LIST_CITY)
-
-    # L2 input
-    file_name = [i for i in LIST_CITY_DATA_FILE_NAME if SOURCE_CITY in i][0]
-    X_source = read_data_file(file_name=file_name, data_type='artifact_app')
-    list_sources_venues = list(X_source[col_grain].values)
-    SOURCE_VENUE = st.selectbox('Neighborhood', list_sources_venues)
+    #st.markdown('Moving from:')
+    SOURCE_CITY = st.sidebar.selectbox('From City', LIST_CITY)
 
     # L3 input
-    st.text("")
-    st.markdown('Moving to:')
-    DEST_CITY = st.selectbox('Destination City', LIST_CITY)
+    # st.text("")
+    # st.markdown('Moving to:')
+    DEST_CITY = st.sidebar.selectbox('To City', LIST_CITY)
 
+    st.text("")
+    st.text("")
     if SOURCE_CITY == DEST_CITY:
         st.markdown('Moving to a new Neighborhood in {}?'.format(SOURCE_CITY))
     else:
         st.markdown('Moving from {} to {}?'.format(SOURCE_CITY, DEST_CITY))
+    # L2 input
+    file_name = [i for i in LIST_CITY_DATA_FILE_NAME if SOURCE_CITY in i][0]
+    X_source = read_data_file(file_name=file_name, data_type='artifact_app')
+    list_sources_venues = list(X_source[col_grain].values)
+    SOURCE_VENUE = st.selectbox('From Neighborhood', list_sources_venues)
 
     # L2-inputs
     st.text("")
-    st.markdown('Below inputs help in visualizing the recommendations')
-    NUM_MATCH = st.selectbox("num matching neighborhood to be displayed", [i for i in range(5, 11)])
-    NUM_VENUES = st.selectbox("num venues to be displayed", [i for i in range(6, 11)])
-    result = ""
+    st.text("")
+    st.sidebar.markdown('Below inputs help in better visualization of recommendations')
+    #NUM_MATCH = st.selectbox("num matching neighborhood to be displayed", [i for i in range(5, 11)])
+    #NUM_VENUES = st.selectbox("num venues to be displayed", [i for i in range(6, 11)])
+    NUM_MATCH = st.sidebar.slider("Choose num matching neighborhood to be displayed: ", min_value=3, max_value=8, value=4, step=1)
+    NUM_VENUES = st.sidebar.slider("Choose num venues to be displayed: ", min_value=4, max_value=15, value=8, step=1)
 
     file_name = [i for i in LIST_CITY_DATA_FILE_NAME if DEST_CITY in i][0]
     X_dest = read_data_file(file_name=file_name, data_type='artifact_app')
@@ -78,7 +73,7 @@ def main():
                                                    colList_features=colList_features, colList_meta=colList_meta)
 
     # when 'Predict' is clicked, make the prediction and store it
-    if st.button("Process Request"):
+    if st.button("Search"):
         # user_input : num_match
         # user_input : num_venues
         num_match = NUM_MATCH
@@ -90,10 +85,15 @@ def main():
                                                                             colList_features=colList_features,
                                                                             num_match=num_match, num_venues=num_venues)
 
-        st.success('processing completed')
-        st.dataframe(X_match_sorted_named)
+        st.success('Here are a few neighborhood/s suggestion for you. Good luck!')
+
+        df = X_match_sorted_named.copy()
+        df = df.drop(columns=['index'])
+        #st.table(df)
+        st.dataframe(df)
+
+        st.text('Generating the venue plot for you....')
         st.pyplot(graph)
-        print('done')
 
 
 if __name__ == '__main__':
