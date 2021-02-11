@@ -31,7 +31,7 @@ colList_rawData = [col_grain, col_feature, col_feature_name]
 colList_meta = [col_grain]
 
 #LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
-LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'bangalore_venues.csv', 'pune_venues.csv']
+LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'bangalore_venues.csv', 'pune_venues.csv', 'hyderabad_venues.csv']
 
 
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
@@ -212,6 +212,8 @@ def preapre_venue_plot_data(X_match_sorted=None, X_meta_mapper=None, colList_fea
     X = X.reset_index()
     X = pd.merge(left=X_meta_mapper, right=X, on='index', how='right')
 
+    #X = X.drop_duplicates(subset=[col_grain], keep='first')  # new change in app
+
     ls_features = [i for i in colList_features if i in X.columns.values]
     plot_df = pd.melt(frame=X, id_vars=col_grain, value_vars=ls_features)
     return X, plot_df
@@ -326,38 +328,6 @@ def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_fea
     fig.text(0.5, 1.02, main_label, ha='center', va='center', rotation='horizontal', size=18, color='blue')
 
     plt.tight_layout()
-    plt.show()
-    return fig
-
-
-def dep_plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_features=None):
-    sns.set_style('darkgrid')
-    fig, axis = plt.subplots(num_venues, 1, figsize=(num_match*2, 2.8*num_venues))
-    fig.subplots_adjust(hspace=0.3, wspace=0.5)
-
-    list_features = [i for i in plot_df.columns if i in colList_features]
-    ylim = plot_df[list_features].max().max()
-    for i_main in range(num_venues):
-        df_temp = plot_df[[col_grain, list_features[i_main]]].copy()
-        ax = axis[i_main]
-        #sns.barplot(x=col_grain, y=list_features[i_main], data=df_temp, ax=ax)
-        sns.barplot(x=col_grain, y=list_features[i_main], data=df_temp, ax=ax,
-                    palette=sns.color_palette(list_palette_0[i_main], num_venues, 0.9))
-
-        ax.set_ylabel(ylabel=list_features[i_main], fontsize=12, color='red')
-        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.set_xlabel(xlabel='', fontsize=12, color='red')
-        ax.set_ylim(0, ylim+1)
-        if i_main == (num_venues-1):
-            ax.set_xticklabels(ax.get_xticklabels(), rotation=40, horizontalalignment='right', size=12)
-        else:
-            ax.set_xticklabels([], rotation=45, horizontalalignment='right', size=12)
-
-        ax.axvline(x=0.5, ymin=0.0, ymax=ylim, linewidth=1, color='grey', linestyle='--')
-
-    main_label = 'Comparison of suggested Neighborhood with the base location\nnum neighborhood : {}\nnum top venues : {}'.format(num_match, num_venues)
-    fig.text(0.5, 0.92, main_label, ha='center', va='center', rotation='horizontal', size=18, color='blue')
-
     plt.show()
     return fig
 

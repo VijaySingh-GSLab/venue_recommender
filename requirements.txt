@@ -1,8 +1,9 @@
 autopep8
 numpy
-matplotlib
 pandas
+matplotlib
+seaborn
 scikit-learn
 streamlit
-seaborn
 streamlit-ace
+folium
