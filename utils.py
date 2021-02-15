@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 from pathlib import Path
+import plotly.graph_objects as go
+
+MAPBOX_TOKEN = 'pk.eyJ1IjoidmlqYXlzaW5naGdzbGFiIiwiYSI6ImNrbDE2dzB2bjBzZm4ydWxibWIyeG5kYXcifQ.zXZCjXTH-S2UjRmrblp76g'
 
 SEED = 100
 DO_PRINT = True
@@ -26,12 +29,19 @@ DATA_PATH_ARTIFACTS_APPDATA = DATA_PATH_ARTIFACTS.joinpath('app_data')
 col_grain = 'Neighborhood'
 col_feature = 'Venue Category'  # Venue
 col_feature_name = 'Venue'
-colList_rawData = [col_grain, col_feature, col_feature_name]
+col_latitude = 'Neighborhood_Latitude'
+col_longitude = 'Neighborhood_Longitude'
+#col_latitude = 'location_lat'
+#col_longitude = 'location_lng'
+
+colList_coordinates = [col_latitude, col_longitude]
+colList_rawData = [col_grain, col_feature, col_feature_name] + colList_coordinates
 #colList_rawData = [col_grain, col_feature]
 colList_meta = [col_grain]
 
+
 #LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
-LIST_CITY_DATA_FILE_NAME = ['delhi_venues.csv', 'bangalore_venues.csv', 'pune_venues.csv', 'hyderabad_venues.csv']
+LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'delhi_venues.csv', 'bangalore_venues.csv', 'pune_venues.csv', 'hyderabad_venues.csv', 'mumbai_venues.csv']
 
 
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
@@ -53,6 +63,7 @@ def read_data_file(file_name=None, data_type='raw'):
         file_name = '{}_{}'.format('app', file_name)
 
     path = get_data_path(data_type)
+    print(file_name)
     X = pd.read_csv(path.joinpath(file_name))
 
     if data_type == 'raw':
@@ -271,7 +282,8 @@ def perform_match_wrapper(X_source=None, X_dest=None, source_name=None, num_matc
 
 
 def visualize_venue_match_results_wrapper(X_source=None, X_match=None, X_meta_mapper=None,
-                                          source_name=None, colList_features=None, num_match=1, num_venues=1):
+                                          source_name=None, colList_features=None, num_match=1, num_venues=1,
+                                          show_plot=False):
     X_match = X_match.head(num_match)
     # prepare plot data
     X_source_selected = get_source_vector(X=X_source, source_name=source_name, return_df=True,
@@ -285,12 +297,12 @@ def visualize_venue_match_results_wrapper(X_source=None, X_match=None, X_meta_ma
     ls_feature_sorted = get_sorted_list_of_features(X_source_selected=X_source_selected,
                                                     colList_features=colList_features)
     plot = plot_venue_match_data(plot_df=X_match_sorted_named, num_match=num_match, num_venues=num_venues,
-                                 colList_features=colList_features)
+                                 colList_features=colList_features, show_plot=show_plot)
 
     return X_match_sorted_named, plot
 
 
-def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_features=None):
+def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_features=None, show_plot=False):
     sns.set_style('darkgrid')
     fig, axis = plt.subplots(num_match, 1, figsize=(1.5 * num_venues, num_match * 4))
     fig.subplots_adjust(hspace=0.5, wspace=0.5)
@@ -328,7 +340,10 @@ def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_fea
     fig.text(0.5, 1.02, main_label, ha='center', va='center', rotation='horizontal', size=18, color='blue')
 
     plt.tight_layout()
-    plt.show()
+
+    if show_plot:
+        plt.show()
+
     return fig
 
 
@@ -337,3 +352,31 @@ def generate_ui_df(X_match_sorted_named=None):
     df.columns = df.iloc[0]
     df = df.iloc[1:]
     return df
+
+
+def plot_nbhd_on_map(plot_df=None, marker_size=20, map_zoom=11, show_plot=False, col_text=col_grain):
+    ls_symbol = ['triangle' for i in range(len(plot_df))]
+
+    fig = go.Figure(go.Scattermapbox(
+        mode="markers+text",
+        lon=plot_df[col_longitude], lat=plot_df[col_latitude],
+        marker={'size': marker_size, 'symbol': ls_symbol},
+        hovertext=plot_df[col_text],
+        text=plot_df[col_text], textposition="bottom right"))
+
+    fig.update_layout(
+        mapbox={
+            'accesstoken': MAPBOX_TOKEN,
+            'center': go.layout.mapbox.Center(
+                lat=plot_df[col_latitude].mean(),
+                lon=plot_df[col_longitude].mean()
+            ),
+            'style': "outdoors", 'zoom': map_zoom},
+        showlegend=False)
+
+    # fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+    if show_plot:
+        fig.show()
+    return fig
