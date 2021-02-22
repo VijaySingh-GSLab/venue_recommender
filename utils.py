@@ -320,6 +320,8 @@ def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_fea
 
         ax.set_ylabel(ylabel='', fontsize=12, color='red')
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+
+        ylim = max(ls_count)
         ax.set_ylim(0, ylim + 1)
 
         ax.set_xticklabels(ls_venues, rotation=15, horizontalalignment='right', size=12)
