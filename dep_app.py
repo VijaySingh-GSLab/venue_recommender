@@ -195,6 +195,12 @@ def main():
                     plot_nbhd_graph(plotly_map=map_graph_nbhd, dest_city_name=DEST_CITY)
     """
 
+    """
+                with st.spinner('Generating the map of neighborhood present in {} ....'.format(DEST_CITY)):
+                    # use mean values of lat/long (Imppp)
+                    map_graph_nbhd = prepare_nbhd_map(dest_city_name=DEST_CITY, X_match_df=X_match_sorted_named)
+                    plot_nbhd_graph(plotly_map=map_graph_nbhd, dest_city_name=DEST_CITY)
+    """
 
 if __name__ == '__main__':
     main()
