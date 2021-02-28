@@ -75,6 +75,7 @@ def get_source_city_info(source_city_name):
 #@st.cache(suppress_st_warning=True)
 def plot_match_df(df=None):
     df = df.copy()
+    df = df.drop_duplicates(subset=[col_grain])
     df = df.drop(columns=['index'])
     st.dataframe(df)
 
@@ -166,6 +167,11 @@ def main():
 
             st.success('Here are a few neighborhood/s suggestion for you. Good luck!')
             plot_match_df(df=X_match_sorted_named)
+
+            with st.spinner('Generating the map of neighborhood present in {} ....'.format(DEST_CITY)):
+                # use mean values of lat/long (Imppp)
+                map_graph_nbhd = prepare_nbhd_map(dest_city_name=DEST_CITY, X_match_df=X_match_sorted_named)
+                plot_nbhd_graph(plotly_map=map_graph_nbhd, dest_city_name=DEST_CITY)
 
             plot_count_graph(graph_count=graph_count, dest_city_name=DEST_CITY)
 

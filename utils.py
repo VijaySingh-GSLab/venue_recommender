@@ -64,8 +64,8 @@ def read_data_file(file_name=None, data_type='raw'):
 
     path = get_data_path(data_type)
     read_path = path.joinpath(file_name)
-    read_path = str(read_path)
-    print(read_path)
+    #read_path = str(read_path)
+    #print(read_path)
     if data_type == 'raw':
         X = pd.read_csv(read_path, usecols=colList_rawData)
         X = X[colList_rawData]
