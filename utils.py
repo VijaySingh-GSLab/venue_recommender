@@ -67,10 +67,10 @@ def read_data_file(file_name=None, data_type='raw'):
     #read_path = str(read_path)
     #print(read_path)
     if data_type == 'raw':
-        X = pd.read_csv(read_path, usecols=colList_rawData)
+        X = pd.read_csv(read_path, usecols=colList_rawData, engine='python')
         X = X[colList_rawData]
     else:
-        X = pd.read_csv(read_path)
+        X = pd.read_csv(read_path, engine='python')
     return X
 
 
