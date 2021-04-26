@@ -90,7 +90,7 @@ def read_data_file(file_name=None, data_type='raw'):
         X = X[colList_rawData]
     else:
         read_path = f'{path}/{file_name}'
-        print('='*50)
+        print('*'*50)
         print(read_path)
         X = pd.read_csv(read_path, engine='python')
         print('-' * 50)
