@@ -24,12 +24,7 @@ PROJECT_PATH = Path.cwd()
 DATA_PATH = PROJECT_PATH.joinpath('dataset')
 DATA_PATH_RAW = DATA_PATH.joinpath('raw_data')
 DATA_PATH_ARTIFACTS = PROJECT_PATH.joinpath('artifacts')
-
-#DATA_PATH_ARTIFACTS_APPDATA = DATA_PATH_ARTIFACTS.joinpath('app_data')
-temp_path = str(DATA_PATH_ARTIFACTS)
-temp_path = temp_path.replace('\\', '/')
-temp_path = f'{temp_path}/app_data'
-DATA_PATH_ARTIFACTS_APPDATA = temp_path
+DATA_PATH_ARTIFACTS_APPDATA = DATA_PATH_ARTIFACTS.joinpath('app_data')
 
 col_grain = 'Neighborhood'
 col_feature = 'Venue Category'  # Venue
@@ -80,21 +75,17 @@ def read_data_file(file_name=None, data_type='raw'):
         file_name = '{}_{}'.format('app', file_name)
 
     path = get_data_path(data_type)
-    # read_path = path.joinpath(file_name) , ??
-
+    read_path = path.joinpath(file_name)
     #read_path = str(read_path)
     #print(read_path)
     if data_type == 'raw':
-        read_path = path.joinpath(file_name)
         X = pd.read_csv(read_path, usecols=colList_rawData, engine='python')
         X = X[colList_rawData]
     else:
-        read_path = f'{path}/{file_name}'
-        print('*'*50)
+        print('='*50)
         print(read_path)
-        read_path = read_path.replace('/', '\\')
         X = pd.read_csv(read_path, engine='python')
-        print('$' * 50)
+        print('=' * 50)
     return X
 
 
