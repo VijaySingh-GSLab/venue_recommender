@@ -41,10 +41,22 @@ colList_meta = [col_grain]
 
 
 #LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'new_york_venues.csv']
-LIST_CITY_DATA_FILE_NAME = ['toronto_venues.csv', 'delhi_venues.csv', 'bangalore_venues.csv', 'pune_venues.csv', 'hyderabad_venues.csv', 'mumbai_venues.csv']
+LIST_CITY_DATA_FILE_NAME = ['Delhi_venues.csv', 'Bangalore_venues.csv', 'Pune_venues.csv', 'Hyderabad_venues.csv',
+                            'Mumbai_venues.csv',
+                            'Toronto_venues.csv', 'London_venues.csv', 'Austin_venues.csv', 'New York_venues.csv']
 
 
 LIST_CITY = [i.split('_venues.csv')[0] for i in LIST_CITY_DATA_FILE_NAME]
+
+
+DICT_CITY_NAME_MAPPER = {
+    'toronto': 'Toronto',
+    'delhi': 'Delhi',
+    'bangalore': 'Banglore',
+    'pune': 'Pune',
+    'hyderabad': 'Hyderabad',
+    'mumbai': 'Mumbai'
+}
 
 
 def get_data_path(data_type):
@@ -305,6 +317,13 @@ def visualize_venue_match_results_wrapper(X_source=None, X_match=None, X_meta_ma
 
 
 def plot_venue_match_data(plot_df=None, num_match=-1, num_venues=-1, colList_features=None, show_plot=False):
+
+    # drop dup entry of nbhd
+    #mac_vc = plot_df[col_grain].value_counts().values[0]
+    #if mac_vc > 1:
+    #    plot_df = plot_df.drop_duplicates(subset=[col_grain])
+    #    num_match = num_match-1
+
     sns.set_style('darkgrid')
     fig, axis = plt.subplots(num_match, 1, figsize=(1.5 * num_venues, num_match * 4))
     fig.subplots_adjust(hspace=0.5, wspace=0.5)
